@@ -10,8 +10,18 @@
   	<description></description>
   	<servlet-class>com.filesystem.Login</servlet-class>
   </servlet>
+  <servlet>
+  	<servlet-name>ReadRemoteFile</servlet-name>
+  	<display-name>ReadRemoteFile</display-name>
+  	<description></description>
+  	<servlet-class>com.filesystem.ReadRemoteFile</servlet-class>
+  </servlet>
   <servlet-mapping>
   	<servlet-name>Login</servlet-name>
   	<url-pattern>/Login</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+  	<servlet-name>ReadRemoteFile</servlet-name>
+  	<url-pattern>/ReadRemoteFile</url-pattern>
   </servlet-mapping>
 </web-app>

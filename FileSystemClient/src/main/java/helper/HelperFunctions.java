@@ -8,40 +8,33 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+
 import com.google.gson.Gson;
+
+import sun.net.www.http.HttpClient;
 
 public class HelperFunctions {
 
 	public String sendLoginRequest(String input) {
-		String json="";
-		String output = "";
-		String response = "";
-
+		String output="";
+		String reply="";
 		try {
-			URL url = new URL("http://localhost:8080/RESTfulExample/json/product/post");
-			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-			conn.setDoOutput(true);
-			conn.setRequestMethod("POST");
-			conn.setRequestProperty("Content-Type", "application/json");
-
-			OutputStream os = conn.getOutputStream();
-			os.write(input.getBytes());
-			os.flush();
-
-			if (conn.getResponseCode() != HttpURLConnection.HTTP_CREATED) {
-				throw new RuntimeException("Failed : HTTP error code : "
-						+ conn.getResponseCode());
+			CloseableHttpClient httpClient = HttpClientBuilder.create().build();
+			HttpGet getRequest = new HttpGet("http://192.168.1.19:8080/File_Server/dfts");
+			getRequest.addHeader("accept", "application/json");
+			HttpResponse response = httpClient.execute(getRequest);
+			if (response.getStatusLine().getStatusCode() != 200) {
+				throw new RuntimeException("Failed : HTTP error code : " + response.getStatusLine().getStatusCode());
 			}
-
-			BufferedReader br = new BufferedReader(new InputStreamReader(
-					(conn.getInputStream())));
-
+			BufferedReader br = new BufferedReader(new InputStreamReader((response.getEntity().getContent())));
 			while ((output = br.readLine()) != null) {
-				response+=output;
+				reply+=output;
 			}
-			Gson gson = new Gson();
-			json = gson.toJson(response);
-			conn.disconnect();
+
 		}catch(MalformedURLException e) {
 
 			e.printStackTrace();
@@ -51,7 +44,7 @@ public class HelperFunctions {
 			e.printStackTrace();
 
 		}
-		return json;
+		return reply;
 
 	}
 
