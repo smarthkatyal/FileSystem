@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import helper.HelperFunctions;
 import messages.LoginRequest;
 import messages.LoginResponse;
+import messages.PropertyStore;
 
 /**
  * Servlet implementation class Login
@@ -31,6 +32,7 @@ public class Login extends HttpServlet {
 	 */
 	public void init(ServletConfig config) throws ServletException {
 		hf = new HelperFunctions();
+		PropertyStore.loadProperties();
 	}
 
 	/**
@@ -45,12 +47,14 @@ public class Login extends HttpServlet {
 		String reply = hf.sendLoginRequest(loginRequest.getJsonString());
 		LoginResponse loginResponse = new LoginResponse();
 		loginResponse = loginResponse.getClassFromJsonString(reply);
-		if(loginResponse.getAuthstatus().equals("Y")) {
+		if(loginResponse.getAuthstatus().equals("Y")&&loginResponse.getUsertype().equals("N")) {
+			request.getSession().setAttribute("fname", loginResponse.getName());
+			System.out.println(request.getAttribute("fname"));
+			System.out.println("Name :: "+loginResponse.getName());
 			request.getRequestDispatcher("welcome.jsp").forward(request, response);
 		}else {
 			request.getRequestDispatcher("index.jsp").forward(request, response);
 		}
-		
 		
 	}
 

@@ -7,6 +7,7 @@ public class LoginResponse {
 	String name;
 	String token;
 	String authstatus;
+	String usertype;
 	/**
 	 * @return the name
 	 */
@@ -45,6 +46,18 @@ public class LoginResponse {
 		this.authstatus = authstatus;
 	}
 	
+	/**
+	 * @return the usertype
+	 */
+	public String getUsertype() {
+		return usertype;
+	}
+	/**
+	 * @param usertype the usertype to set
+	 */
+	public void setUsertype(String usertype) {
+		this.usertype = usertype;
+	}
 	public LoginResponse getClassFromJsonString(String replyInString) {
 		Gson gson = new Gson();
 		LoginResponse loginResponse = gson.fromJson(replyInString, LoginResponse.class);
