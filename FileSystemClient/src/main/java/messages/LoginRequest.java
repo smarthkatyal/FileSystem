@@ -1,6 +1,7 @@
 package messages;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 public class LoginRequest {
 
@@ -20,7 +21,7 @@ public class LoginRequest {
 	}
 	
 	public String getJsonString() {
-		Gson gson = new Gson();
+		Gson gson = new GsonBuilder().disableHtmlEscaping().create();
 		String json = gson.toJson(this);
 		return json;
 	}

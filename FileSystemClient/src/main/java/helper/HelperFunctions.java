@@ -18,12 +18,15 @@ import messages.PropertyStore;
 
 public class HelperFunctions {
 
-	public String connection(String url, String input) {
+	public String connection(String url, String input,String type) {
 		String output="";
 		String reply="";
 		try {
 			CloseableHttpClient httpClient = HttpClientBuilder.create().build();
 			HttpPost postRequest = new HttpPost(url);
+			System.out.println("*******\nSending "+type+" Request:\n"+input+"\n*********");
+			System.out.println("*******\nSending "+type+" Request to "+url+"\n**********");
+			
 			postRequest.addHeader("accept", "application/json");
 			StringEntity se = new StringEntity(input.toString());
 			se.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
@@ -36,6 +39,7 @@ public class HelperFunctions {
 			while ((output = br.readLine()) != null) {
 				reply+=output;
 			}
+			System.out.println("*******\nGot  "+type+" Response:\n"+reply+"\n*********");
 
 		}catch(MalformedURLException e) {
 
@@ -50,12 +54,19 @@ public class HelperFunctions {
 	}
 	public String sendLoginRequest(String input) {
 		String url = PropertyStore.serverUrl+PropertyStore.loginUrl;
-		return connection(url,input);
+		String type = "Login";
+		return connection(url,input,type);
 
 	}
 	public String sendReadRequest(String input) {
 		String url = PropertyStore.serverUrl+PropertyStore.readfileUrl;
-		return connection(url,input);
+		String type = "ReadFile";
+		return connection(url,input,type);
+	}
+	public String getDirectoryInfo(String input) {
+		String url = PropertyStore.directoryServerUrl+PropertyStore.directoryinfoUrl;
+		String type = "GetDirectoryInfo";
+		return connection(url,input,type);
 	}
 
 }
