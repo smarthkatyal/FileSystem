@@ -46,18 +46,15 @@ public class SecurityFunctions {
 		return strData;
 	}
 
-	public static String decrypt(String strEncrypted,String strKey) {
+	public static String decrypt(String strEncrypted,String strKey) throws UnsupportedEncodingException {
 		String strData="";
-System.out.println(strEncrypted);
-System.out.println(strKey);
 		try {
-			byte[] encrByte = strEncrypted.getBytes("Cp1252");
-			strEncrypted = new String(Base64.decode(encrByte));
-			System.out.println(strEncrypted);
+			byte[] encByte= strEncrypted.getBytes("Cp1252");
+			byte[] bytEncrypted = Base64.decode(encByte);
 			SecretKeySpec skeyspec=new SecretKeySpec(strKey.getBytes("Cp1252"),"Blowfish");
 			Cipher cipher=Cipher.getInstance("Blowfish");
 			cipher.init(Cipher.DECRYPT_MODE, skeyspec);
-			byte[] decrypted=cipher.doFinal(strEncrypted.getBytes("Cp1252"));
+			byte[] decrypted=cipher.doFinal(bytEncrypted);
 			strData=new String(decrypted);
 
 		} catch (NoSuchAlgorithmException e) {
@@ -70,21 +67,20 @@ System.out.println(strKey);
 			e.printStackTrace();
 		} catch (BadPaddingException e) {
 			e.printStackTrace();
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
 		}
 		return strData;
 	}
-	public static String getNewKeyString()  {
+	public static String getNewKey()  {
 		Key symKey=null;
-		BASE64Encoder encoder = new BASE64Encoder();
+		BASE64Encoder be = new BASE64Encoder();
 		try {
 			symKey = KeyGenerator.getInstance("Blowfish").generateKey();
+			
 		}
 		catch(NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		}
-		return encoder.encode(symKey.getEncoded());
+		return symKey.getEncoded().toString();
 	}
 	/*public static Key getKeyfromString(String keyString) {
 		BASE64Decoder decoder = new BASE64Decoder();

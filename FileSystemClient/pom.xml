@@ -49,6 +49,13 @@
 			<artifactId>json</artifactId>
 			<version>20141113</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.sun.jersey/jersey-bundle -->
+		<dependency>
+			<groupId>com.sun.jersey</groupId>
+			<artifactId>jersey-bundle</artifactId>
+			<version>1.19.4</version>
+		</dependency>
+
 	</dependencies>
 	<build>
 		<finalName>FileSystemClient</finalName>

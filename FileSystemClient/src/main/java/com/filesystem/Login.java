@@ -57,6 +57,7 @@ public class Login extends HttpServlet {
 			request.getSession().setAttribute("fname", loginResponse.getName());
 			request.getSession().setAttribute("token", loginResponse.getToken());
 			request.getSession().setAttribute("key1", loginResponse.getKey1());
+			request.getSession().setAttribute("usernamenc", loginRequest.getUsername());
 			request.getRequestDispatcher("welcome.jsp").forward(request, response);
 		}else {
 			request.getRequestDispatcher("index.jsp").forward(request, response);
