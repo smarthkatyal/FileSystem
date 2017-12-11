@@ -82,11 +82,16 @@ public class ReadRemoteFile extends HttpServlet {
 			//End TODO: Temp code to test locking, remove
 			request.getSession().setAttribute("status", "1");
 			request.getSession().setAttribute("filecontent", filecontent);
+			request.getSession().setAttribute("filename", filename);
 			System.out.println(filecontent);
 			request.getRequestDispatcher("readfile.jsp").forward(request, response);
 		}else {
 			System.out.println("Validation Failed");
 			request.getSession().setAttribute("status", "0");
+			if(fileInfoResponse.getAuthstatus()==null)
+				fileInfoResponse.setAuthstatus("");
+			request.getSession().setAttribute("message", fileInfoResponse.getAuthstatus());
+			request.getRequestDispatcher("readfile.jsp").forward(request, response);
 			//Set error pattern here and return;
 		}
 		

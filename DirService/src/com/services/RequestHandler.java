@@ -50,6 +50,11 @@ public class RequestHandler {
 			
 			try {
 				fileStats = hf.getFileLocation(SecurityFunctions.decrypt(getFileInfoFromDSRequest.getFilename(),checkResponse.getKey1()));
+				if(fileStats.isEmpty()) {
+					getFileInfoFromDSResponse.setAuthstatus("Directory Information Not Available for the file"); 
+					getFileInfoFromDSResponseString = getFileInfoFromDSResponse.getJsonString();
+					return getFileInfoFromDSResponseString;
+				}
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 			}
@@ -58,7 +63,7 @@ public class RequestHandler {
 			getFileInfoFromDSResponse.setDirectory(SecurityFunctions.encrypt(fileStats.get("directory"),checkResponse.getKey1()));
 			getFileInfoFromDSResponse.setAuthstatus("Y");
 		}else {
-			getFileInfoFromDSResponse.setAuthstatus("N");
+			getFileInfoFromDSResponse.setAuthstatus("Validation of token Failed");
 		}
 		
 		getFileInfoFromDSResponseString = getFileInfoFromDSResponse.getJsonString();
