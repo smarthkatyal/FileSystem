@@ -1,6 +1,5 @@
 package com.security;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.Key;
@@ -13,22 +12,18 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
 
-import com.sun.jersey.core.util.Base64;
-
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
+import java.util.Base64;
 
 public class SecurityFunctions {
 
 	public static String encrypt(String strClearText,String strKey) {
 		String strData="";
-
+		
 		try {
 			SecretKeySpec skeyspec=new SecretKeySpec(strKey.getBytes("Cp1252"),"Blowfish");
 			Cipher cipher=Cipher.getInstance("Blowfish");
 			cipher.init(Cipher.ENCRYPT_MODE, skeyspec);
-			byte[] encrypted=cipher.doFinal(strClearText.getBytes("Cp1252"));
-			strData=new String(Base64.encode(encrypted));
+			strData=new String(Base64.getEncoder().encodeToString(cipher.doFinal(strClearText.getBytes("Cp1252"))));
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		} catch (NoSuchPaddingException e) {
@@ -49,8 +44,7 @@ public class SecurityFunctions {
 	public static String decrypt(String strEncrypted,String strKey) throws UnsupportedEncodingException {
 		String strData="";
 		try {
-			byte[] encByte= strEncrypted.getBytes("Cp1252");
-			byte[] bytEncrypted = Base64.decode(encByte);
+			byte[] bytEncrypted = Base64.getDecoder().decode(strEncrypted.getBytes("Cp1252"));
 			SecretKeySpec skeyspec=new SecretKeySpec(strKey.getBytes("Cp1252"),"Blowfish");
 			Cipher cipher=Cipher.getInstance("Blowfish");
 			cipher.init(Cipher.DECRYPT_MODE, skeyspec);
@@ -72,7 +66,6 @@ public class SecurityFunctions {
 	}
 	public static String getNewKey()  {
 		Key symKey=null;
-		BASE64Encoder be = new BASE64Encoder();
 		try {
 			symKey = KeyGenerator.getInstance("Blowfish").generateKey();
 			
@@ -94,3 +87,4 @@ public class SecurityFunctions {
         return key;
 	}*/
 }
+

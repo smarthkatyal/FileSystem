@@ -1,4 +1,4 @@
-package com.messagetemplates;
+package messages;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -45,7 +45,6 @@ public class GetFileInfoFromDSResponse {
 	public void setToken(String token) {
 		this.token = token;
 	}
-	
 	/**
 	 * @return the authstatus
 	 */
@@ -58,9 +57,11 @@ public class GetFileInfoFromDSResponse {
 	public void setAuthstatus(String authstatus) {
 		this.authstatus = authstatus;
 	}
-	public String getJsonString() {
+	
+	public GetFileInfoFromDSResponse getClassFromJsonString(String replyInString) {
 		Gson gson = new GsonBuilder().disableHtmlEscaping().create();
-		String json = gson.toJson(this);
-		return json;
+		GetFileInfoFromDSResponse response = gson.fromJson(replyInString, GetFileInfoFromDSResponse.class);
+		return response;
 	}
+	 
 }

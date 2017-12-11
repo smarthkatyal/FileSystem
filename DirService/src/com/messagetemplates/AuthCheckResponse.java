@@ -6,36 +6,37 @@ import com.google.gson.GsonBuilder;
 
 public class AuthCheckResponse {
 
-	String authStatus;
-	String key2;
+	String authstatus;
+	String key1;
 	/**
 	 * @return the authStatus
 	 */
-	public String getAuthStatus() {
-		return authStatus;
+	public String getAuthstatus() {
+		return authstatus;
 	}
 
 	/**
 	 * @param authStatus the authStatus to set
 	 */
-	public void setAuthStatus(String authStatus) {
-		this.authStatus = authStatus;
+	public void setAuthstatus(String authstatus) {
+		this.authstatus = authstatus;
 	}
 
 	
 	
+
 	/**
-	 * @return the key2
+	 * @return the key1
 	 */
-	public String getKey2() {
-		return key2;
+	public String getKey1() {
+		return key1;
 	}
 
 	/**
-	 * @param key2 the key2 to set
+	 * @param key1 the key1 to set
 	 */
-	public void setKey2(String key2) {
-		this.key2 = key2;
+	public void setKey1(String key1) {
+		this.key1 = key1;
 	}
 
 	public AuthCheckResponse getClassFromJsonString(String replyInString) {

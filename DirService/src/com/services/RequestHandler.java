@@ -17,37 +17,63 @@ public class RequestHandler {
 		PropertyStore.loadProperties();
 	}
 
+	/*
+	 * Gets a request from client with encrypted username(encrypted with password) and token(encrypted with Key2) and filename(encrypted with key1)
+	 * It then sends a request to AS with encrypted username(encrypted with password) and token(encrypted with Key2)
+	 * The AS sends Y or N after validation of token and username. It also sends key1.
+	 * The DS then sends the response to client with file location encrypted with key1.
+	 * 
+	 */
 	@POST
 	@Consumes({"application/json"})
 	@Path("/getFileInfo")
 	public String getFileInfo(String input) {
+		
 		PropertyStore.loadProperties();
 		GetFileInfoFromDSResponse getFileInfoFromDSResponse = new GetFileInfoFromDSResponse();
 		GetFileInfoFromDSRequest getFileInfoFromDSRequest = new GetFileInfoFromDSRequest();
-		getFileInfoFromDSRequest = getFileInfoFromDSRequest.getClassFromJsonString(input);
-
-		
+		String getFileInfoFromDSResponseString=new String();
+		HelperFunctions hf = new HelperFunctions();
 		AuthCheckRequest checkReq = new AuthCheckRequest();
+		AuthCheckResponse checkResponse = new AuthCheckResponse();
+		getFileInfoFromDSRequest = getFileInfoFromDSRequest.getClassFromJsonString(input);
+		HashMap<String, String> fileStats = new HashMap<String,String>();
+		
 		checkReq.setToken(getFileInfoFromDSRequest.getToken());
 		checkReq.setEncryptedUsername(getFileInfoFromDSRequest.getEncryptedUsername());
 		String authCheckRequest = checkReq.getJsonString();
-		HelperFunctions hf = new HelperFunctions();
+		
 		String authCheckResponse = hf.sendAuthCheckRequest(authCheckRequest);
-		AuthCheckResponse checkResponse = new AuthCheckResponse();
-		checkResponse = checkResponse.getClassFromJsonString(authCheckRequest);
-		if(checkResponse.getAuthStatus().equals("Y")) {
-			HashMap<String, String> fileStats = new HashMap<String,String>();
+		
+		checkResponse = checkResponse.getClassFromJsonString(authCheckResponse);
+		if(checkResponse.getAuthstatus().equals("Y")) {
+			
 			try {
-				fileStats = hf.getFileLocation(SecurityFunctions.decrypt(getFileInfoFromDSRequest.getFilename(),checkResponse.getKey2()));
+				fileStats = hf.getFileLocation(SecurityFunctions.decrypt(getFileInfoFromDSRequest.getFilename(),checkResponse.getKey1()));
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 			}
 			
-			getFileInfoFromDSResponse.setServerurl(fileStats.get("serverurl"));
-			getFileInfoFromDSResponse.setDirectory(fileStats.get("directory"));
+			getFileInfoFromDSResponse.setServerurl(SecurityFunctions.encrypt(fileStats.get("serverurl"),checkResponse.getKey1()));
+			getFileInfoFromDSResponse.setDirectory(SecurityFunctions.encrypt(fileStats.get("directory"),checkResponse.getKey1()));
+			getFileInfoFromDSResponse.setAuthstatus("Y");
+		}else {
+			getFileInfoFromDSResponse.setAuthstatus("N");
 		}
-		System.out.println(authCheckResponse);
-		return getFileInfoFromDSResponse.getJsonString();
-}
+		
+		getFileInfoFromDSResponseString = getFileInfoFromDSResponse.getJsonString();
+		System.out.println(getFileInfoFromDSResponseString);
+		return getFileInfoFromDSResponseString;
+	}
+	
+	/*
+	 * Created only to test if webserver is up and running
+	 */
+	@POST
+	@Consumes({"application/json"})
+	@Path("/test")
+	public String testServer(String input) {
+		return "up and running";
+	}
 }
 

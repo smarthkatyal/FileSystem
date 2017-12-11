@@ -7,6 +7,21 @@ public class ReadRequest {
 
 	String filename;
 	String token;
+	String encryptedUsername;
+	String directory;
+	
+	/**
+	 * @return the directory
+	 */
+	public String getDirectory() {
+		return directory;
+	}
+	/**
+	 * @param directory the directory to set
+	 */
+	public void setDirectory(String directory) {
+		this.directory = directory;
+	}
 	/**
 	 * @return the filename
 	 */
@@ -32,6 +47,18 @@ public class ReadRequest {
 		this.token = token;
 	}
 	
+	/**
+	 * @return the encryptedUsername
+	 */
+	public String getEncryptedUsername() {
+		return encryptedUsername;
+	}
+	/**
+	 * @param encryptedUsername the encryptedUsername to set
+	 */
+	public void setEncryptedUsername(String encryptedUsername) {
+		this.encryptedUsername = encryptedUsername;
+	}
 	public String getJsonString() {
 		Gson gson = new GsonBuilder().disableHtmlEscaping().create();
 		String json = gson.toJson(this);

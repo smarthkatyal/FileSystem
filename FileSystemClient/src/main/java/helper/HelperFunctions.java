@@ -58,14 +58,19 @@ public class HelperFunctions {
 		return connection(url,input,type);
 
 	}
-	public String sendReadRequest(String input) {
-		String url = PropertyStore.serverUrl+PropertyStore.readfileUrl;
+	public String sendReadRequest(String input, String serverip) {
+		String url = serverip+ PropertyStore.readfileUrl;
 		String type = "ReadFile";
 		return connection(url,input,type);
 	}
 	public String getDirectoryInfo(String input) {
 		String url = PropertyStore.directoryServerUrl+PropertyStore.directoryinfoUrl;
 		String type = "GetDirectoryInfo";
+		return connection(url,input,type);
+	}
+	public String sendLockRequest(String input) {
+		String url = PropertyStore.lockServerUrl+PropertyStore.lockingUrl;
+		String type = "GetLock";
 		return connection(url,input,type);
 	}
 

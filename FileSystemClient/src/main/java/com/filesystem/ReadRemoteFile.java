@@ -12,8 +12,11 @@ import com.security.SecurityFunctions;
 
 import helper.HelperFunctions;
 import messages.GetFileInfoFromDSRequest;
+import messages.GetFileInfoFromDSResponse;
+import messages.LockRequest;
 import messages.PropertyStore;
 import messages.ReadRequest;
+import messages.ReadResponse;
 
 /**
  * Servlet implementation class ReadRemoteFile
@@ -40,12 +43,12 @@ public class ReadRemoteFile extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		response.getWriter().append("Served at: ").append(request.getContextPath());
 		String token = (String)request.getSession().getAttribute("token");
 		String key1 = (String)request.getSession().getAttribute("key1");
 		String usernameEnc = (String)request.getSession().getAttribute("usernamenc");
 		String filename = request.getParameter("fn");
+		
 		//Get file info from DS
 		GetFileInfoFromDSRequest infoRequest = new GetFileInfoFromDSRequest();
 		infoRequest.setFilename(SecurityFunctions.encrypt(filename, key1));
@@ -53,16 +56,41 @@ public class ReadRemoteFile extends HttpServlet {
 		infoRequest.setEncryptedUsername(usernameEnc);
 		String infoRequestJson = infoRequest.getJsonString();
 		String replyInfoRequest = hf.getDirectoryInfo(infoRequestJson);
-		SecurityFunctions.decrypt(replyInfoRequest, key1);
+		GetFileInfoFromDSResponse fileInfoResponse = new GetFileInfoFromDSResponse();
+		fileInfoResponse=fileInfoResponse.getClassFromJsonString(replyInfoRequest);
+		if(fileInfoResponse.getAuthstatus().equals("Y")){
+			fileInfoResponse.setServerurl(SecurityFunctions.decrypt(fileInfoResponse.getServerurl(),key1));
+			//Read from the server returned
+			ReadRequest readRequest = new ReadRequest();
+			readRequest.setFilename(SecurityFunctions.encrypt(filename, key1));
+			readRequest.setToken(token);
+			readRequest.setEncryptedUsername(usernameEnc);
+			readRequest.setDirectory(fileInfoResponse.getDirectory());//This is also encrypted with key1
+			String jsonReadRequest = readRequest.getJsonString();
+			String readResponsereply = hf.sendReadRequest(jsonReadRequest,fileInfoResponse.getServerurl());
+			ReadResponse readResponse = new ReadResponse();
+			readResponse = readResponse.getClassFromJsonString(readResponsereply);
+			String filecontent = SecurityFunctions.decrypt(readResponse.getFilecontent(),key1);
+			//Start TODO:Temp code to test locking,remove
+			LockRequest lockRequest = new LockRequest();
+			lockRequest.setEmail(SecurityFunctions.encrypt("hello@gmail.com", key1));
+			lockRequest.setFilename(SecurityFunctions.encrypt(filename, key1));
+			lockRequest.setToken(token);
+			lockRequest.setUsername(usernameEnc);
+			String lockRequestStr = lockRequest.getJsonString();
+			hf.sendLockRequest(lockRequestStr);
+			//End TODO: Temp code to test locking, remove
+			request.getSession().setAttribute("status", "1");
+			request.getSession().setAttribute("filecontent", filecontent);
+			System.out.println(filecontent);
+			request.getRequestDispatcher("readfile.jsp").forward(request, response);
+		}else {
+			System.out.println("Validation Failed");
+			request.getSession().setAttribute("status", "0");
+			//Set error pattern here and return;
+		}
 		
-		//Read from the server returned
-		ReadRequest readRequest = new ReadRequest();
-		readRequest.setFilename(filename);
-		readRequest.setToken(token);
-		String jsonRequest = readRequest.getJsonString();
-		System.out.println("*******\nSending DirectoryInfo Reqeust(Before Encryption):\n"+jsonRequest+"\n*********");
-		String reply = hf.sendReadRequest(SecurityFunctions.encrypt(jsonRequest, key1));
-		SecurityFunctions.decrypt(reply, key1);
+
 	}
 
 	/**

@@ -62,8 +62,8 @@ public class HelperFunctions {
 		//TODO Query db for filename and remove hardcoding
 		
 		HashMap<String, String> filestats = new HashMap<String, String>();
-		filestats.put("serverurl", "http://10.6.60.93:8080/");
-		filestats.put("directory", "C:\\Users\\Smarth.Katyal\\Desktop\\temp.txt");
+		filestats.put("serverurl", "http://127.0.0.1:8083/");
+		filestats.put("directory", "Smarth\\");
 		return filestats;
 	}
 
