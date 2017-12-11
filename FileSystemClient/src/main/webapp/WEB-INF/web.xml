@@ -22,6 +22,12 @@
   	<description></description>
   	<servlet-class>com.filesystem.WriteRemoteFile</servlet-class>
   </servlet>
+    <servlet>
+  	<servlet-name>SendChangesForWrite</servlet-name>
+  	<display-name>SendChangesForWrite</display-name>
+  	<description></description>
+  	<servlet-class>com.filesystem.SendChangesForWrite</servlet-class>
+  </servlet>
   <servlet-mapping>
   	<servlet-name>Login</servlet-name>
   	<url-pattern>/Login</url-pattern>
@@ -33,5 +39,9 @@
   <servlet-mapping>
   	<servlet-name>WriteRemoteFile</servlet-name>
   	<url-pattern>/WriteRemoteFile</url-pattern>
+  </servlet-mapping>
+    <servlet-mapping>
+  	<servlet-name>SendChangesForWrite</servlet-name>
+  	<url-pattern>/SendChangesForWrite</url-pattern>
   </servlet-mapping>
 </web-app>

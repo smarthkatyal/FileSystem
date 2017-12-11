@@ -71,19 +71,9 @@ public class ReadRemoteFile extends HttpServlet {
 			ReadResponse readResponse = new ReadResponse();
 			readResponse = readResponse.getClassFromJsonString(readResponsereply);
 			String filecontent = SecurityFunctions.decrypt(readResponse.getFilecontent(),key1);
-			//Start TODO:Temp code to test locking,remove
-			LockRequest lockRequest = new LockRequest();
-			lockRequest.setEmail(SecurityFunctions.encrypt("hello@gmail.com", key1));
-			lockRequest.setFilename(SecurityFunctions.encrypt(filename, key1));
-			lockRequest.setToken(token);
-			lockRequest.setUsername(usernameEnc);
-			String lockRequestStr = lockRequest.getJsonString();
-			hf.sendLockRequest(lockRequestStr);
-			//End TODO: Temp code to test locking, remove
 			request.getSession().setAttribute("status", "1");
 			request.getSession().setAttribute("filecontent", filecontent);
 			request.getSession().setAttribute("filename", filename);
-			System.out.println(filecontent);
 			request.getRequestDispatcher("readfile.jsp").forward(request, response);
 		}else {
 			System.out.println("Validation Failed");
