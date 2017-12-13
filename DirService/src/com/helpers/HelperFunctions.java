@@ -24,18 +24,26 @@ import com.messagetemplates.PropertyStore;
 
 public class HelperFunctions {
 
-	public static Connection sqlconnect() {
-		Connection conn= null;
+	public  Connection sqlconnect() {
+		Connection con= null;
+		if(!PropertyStore.loadstatus.equals("1"))
+			PropertyStore.loadProperties();
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
-			conn=DriverManager.getConnection("jdbc:mysql://localhost:3306/dirservice?useSSL=false","root","password");
-		}
+			con=DriverManager.getConnection(  
+					"jdbc:mysql://"+PropertyStore.dbip+":"+
+			PropertyStore.dbport+"/"+PropertyStore.dbname+
+			"?useSSL=false",
+			PropertyStore.dbusername,
+			PropertyStore.dbpassword);
+		} 
+
 		catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return conn;
+		return con;
 	}
 
 	public String connection(String url, String input,String type) {
