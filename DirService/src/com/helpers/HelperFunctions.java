@@ -138,5 +138,28 @@ public class HelperFunctions {
 
 	}
 
+	//Method returns all the filenames in the db
+	public HashMap<String, String> getCompleteFileList() {
+		HashMap<String, String> filestats = new HashMap<String, String>();
+		ResultSet rs;
+		String filenameList="";
+		String directoryList="";
+		try {
+			Connection conn = sqlconnect();
+			Statement stmt=conn.createStatement();
+			rs = stmt.executeQuery("select filename,directory from dirservice.filelist;");
+			while(rs.next())
+			{
+				filenameList=rs.getString(1)+","+filenameList;
+				directoryList=rs.getString(2)+","+directoryList;
+			}
+			filestats.put("filename", filenameList);
+			filestats.put("directory", directoryList);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return filestats;
+	}
+
 
 }

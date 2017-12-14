@@ -24,7 +24,7 @@ public class RequestHandler {
 	@Consumes({"application/json"})
 	@Path("/getFileInfo")
 	public String getFileInfo(String input) {
-		
+
 		PropertyStore.loadProperties();
 		GetFileInfoFromDSResponse getFileInfoFromDSResponse = new GetFileInfoFromDSResponse();
 		GetFileInfoFromDSRequest getFileInfoFromDSRequest = new GetFileInfoFromDSRequest();
@@ -34,16 +34,16 @@ public class RequestHandler {
 		AuthCheckResponse checkResponse = new AuthCheckResponse();
 		getFileInfoFromDSRequest = getFileInfoFromDSRequest.getClassFromJsonString(input);
 		HashMap<String, String> fileStats = new HashMap<String,String>();
-		
+
 		checkReq.setToken(getFileInfoFromDSRequest.getToken());
 		checkReq.setEncryptedUsername(getFileInfoFromDSRequest.getEncryptedUsername());
 		String authCheckRequest = checkReq.getJsonString();
-		
+
 		String authCheckResponse = hf.sendAuthCheckRequest(authCheckRequest);
-		
+
 		checkResponse = checkResponse.getClassFromJsonString(authCheckResponse);
 		if(checkResponse.getAuthstatus().equals("Y")) {
-			
+
 			try {
 				if(getFileInfoFromDSRequest.getOperation().equals("r"))
 					fileStats = hf.getFileLocationForRead(SecurityFunctions.decrypt(getFileInfoFromDSRequest.getFilename(),checkResponse.getKey1()));
@@ -57,19 +57,49 @@ public class RequestHandler {
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 			}
-			
+
 			getFileInfoFromDSResponse.setServerurl(SecurityFunctions.encrypt(fileStats.get("serverurl"),checkResponse.getKey1()));
 			getFileInfoFromDSResponse.setDirectory(SecurityFunctions.encrypt(fileStats.get("directory"),checkResponse.getKey1()));
 			getFileInfoFromDSResponse.setAuthstatus("Y");
 		}else {
 			getFileInfoFromDSResponse.setAuthstatus("Validation of token Failed");
 		}
-		
+
 		getFileInfoFromDSResponseString = getFileInfoFromDSResponse.getJsonString();
 		System.out.println(getFileInfoFromDSResponseString);
 		return getFileInfoFromDSResponseString;
 	}
-	
+
+	/*
+	 * Get complete information about the directory
+	 */
+	@POST
+	@Consumes({"application/json"})
+	@Path("/getDirInfo")
+	public String getDirInfo(String input) {
+		PropertyStore.loadProperties();
+		GetFileInfoFromDSRequest getFileInfoFromDSRequest = new GetFileInfoFromDSRequest();
+		GetCompleteInfoResponse getCompleteInfoResponse = new GetCompleteInfoResponse();
+		String getFileInfoFromDSResponseString=new String();
+		HelperFunctions hf = new HelperFunctions();
+		AuthCheckRequest checkReq = new AuthCheckRequest();
+		AuthCheckResponse checkResponse = new AuthCheckResponse();
+		getFileInfoFromDSRequest = getFileInfoFromDSRequest.getClassFromJsonString(input);
+		HashMap<String, String> fileStats = new HashMap<String,String>();
+		checkReq.setToken(getFileInfoFromDSRequest.getToken());
+		checkReq.setEncryptedUsername(getFileInfoFromDSRequest.getEncryptedUsername());
+		String authCheckRequest = checkReq.getJsonString();
+		String authCheckResponse = hf.sendAuthCheckRequest(authCheckRequest);
+		checkResponse = checkResponse.getClassFromJsonString(authCheckResponse);
+		if(checkResponse.getAuthstatus().equals("Y")) {
+			HashMap<String, String> fileList = hf.getCompleteFileList();
+			getCompleteInfoResponse.setFilenamearr(fileList.get("filename"));
+			getCompleteInfoResponse.setDirectoryarr(fileList.get("directory"));
+			return getCompleteInfoResponse.getJsonString();
+		}else {
+			return "{\"authstatus\":\"N\"}";
+		}
+	}
 	/*
 	 * Created only to test if webserver is up and running
 	 */
