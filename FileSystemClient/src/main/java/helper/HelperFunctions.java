@@ -6,7 +6,6 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 
 import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -71,6 +70,11 @@ public class HelperFunctions {
 	public String sendLockRequest(String input) {
 		String url = PropertyStore.lockServerUrl+PropertyStore.lockingUrl;
 		String type = "GetLock";
+		return connection(url,input,type);
+	}
+	public String sendWriteRequest(String input, String serverurl) {
+		String url = serverurl+ PropertyStore.writefileUrl;
+		String type = "WriteFile";
 		return connection(url,input,type);
 	}
 

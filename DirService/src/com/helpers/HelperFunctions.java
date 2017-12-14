@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.ResultSet;
@@ -32,10 +33,10 @@ public class HelperFunctions {
 			Class.forName("com.mysql.jdbc.Driver");
 			con=DriverManager.getConnection(  
 					"jdbc:mysql://"+PropertyStore.dbip+":"+
-			PropertyStore.dbport+"/"+PropertyStore.dbname+
-			"?useSSL=false",
-			PropertyStore.dbusername,
-			PropertyStore.dbpassword);
+							PropertyStore.dbport+"/"+PropertyStore.dbname+
+							"?useSSL=false",
+							PropertyStore.dbusername,
+							PropertyStore.dbpassword);
 		} 
 
 		catch (ClassNotFoundException e) {
@@ -86,7 +87,7 @@ public class HelperFunctions {
 		return connection(url,input,type);
 
 	}
-	public HashMap<String, String> getFileLocation(String filename) {
+	public HashMap<String, String> getFileLocationForRead(String filename) {
 		HashMap<String, String> filestats = new HashMap<String, String>();
 		ResultSet rs;
 		try {
@@ -102,10 +103,39 @@ public class HelperFunctions {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-
-
-
 		return filestats;
+	}
+
+	
+	public HashMap<String, String> getFileLocationForWrite(String filename) {
+		HashMap<String, String> filestats = new HashMap<String, String>();
+		ResultSet rs;
+		try {
+			Connection conn = sqlconnect();
+			Statement stmt=conn.createStatement();
+			rs = stmt.executeQuery("select server,directory from dirservice.filelist where filename like '" + filename +"';");
+			if(rs.next())
+			{
+				System.out.println("\n\n########################\nServer:: "+ rs.getString(1)+ "Dir:: "+ rs.getString(2));
+				filestats.put("serverurl", rs.getString(1));
+				filestats.put("directory", rs.getString(2));
+			}else {
+				String query = " insert into dirservice.filelist values (?,?,?,?,?)";
+				PreparedStatement preparedStmt = conn.prepareStatement(query);
+				preparedStmt.setString (1, filename);
+				preparedStmt.setString (2, "http://127.0.0.1:8082/");
+				preparedStmt.setString (3, "N");
+				preparedStmt.setString (4, "");
+				preparedStmt.setString (5, "Smarth\\");
+				preparedStmt.execute();
+				filestats.put("serverurl","http://127.0.0.1:8082/");
+				filestats.put("directory", "Smarth\\");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return filestats;
+
 	}
 
 

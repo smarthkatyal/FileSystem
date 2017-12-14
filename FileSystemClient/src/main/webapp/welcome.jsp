@@ -233,7 +233,12 @@ input:focus {
 			<button type="submit" class="btn btn-primary btn-block btn-large">Write to
 				File</button>
 		</form>
+		<%String message1 = (String) session.getAttribute("message"); %>
+	<%=message1 %>
 	</div>
+	<%String message = (String) session.getAttribute("message"); %>
+	<%=message %>
+	
 	<script src="js/index.js"></script>
 </body>
 </html>

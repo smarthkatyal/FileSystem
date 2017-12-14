@@ -35,7 +35,6 @@ public class SecurityFunctions {
 		} catch (BadPaddingException e) {
 			e.printStackTrace();
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return strData;

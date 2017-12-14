@@ -12,10 +12,6 @@ import com.security.SecurityFunctions;
 
 @Path("/dslookup")
 public class RequestHandler {
-	
-	void RequestHandler(){
-		PropertyStore.loadProperties();
-	}
 
 	/*
 	 * Gets a request from client with encrypted username(encrypted with password) and token(encrypted with Key2) and filename(encrypted with key1)
@@ -49,7 +45,10 @@ public class RequestHandler {
 		if(checkResponse.getAuthstatus().equals("Y")) {
 			
 			try {
-				fileStats = hf.getFileLocation(SecurityFunctions.decrypt(getFileInfoFromDSRequest.getFilename(),checkResponse.getKey1()));
+				if(getFileInfoFromDSRequest.getOperation().equals("r"))
+					fileStats = hf.getFileLocationForRead(SecurityFunctions.decrypt(getFileInfoFromDSRequest.getFilename(),checkResponse.getKey1()));
+				else
+					fileStats = hf.getFileLocationForWrite(SecurityFunctions.decrypt(getFileInfoFromDSRequest.getFilename(),checkResponse.getKey1()));
 				if(fileStats.isEmpty()) {
 					getFileInfoFromDSResponse.setAuthstatus("Directory Information Not Available for the file"); 
 					getFileInfoFromDSResponseString = getFileInfoFromDSResponse.getJsonString();
