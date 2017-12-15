@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServletResponse;
 import com.security.SecurityFunctions;
 
 import helper.HelperFunctions;
+import messages.LockResponse;
+import messages.ReleaseLockRequest;
 import messages.WriteRequest;
 import messages.WriteResponse;
 
@@ -71,7 +73,15 @@ public class SendChangesForWrite extends HttpServlet {
 			response.getWriter().append("Served at: ").append(request.getContextPath());
 			request.getRequestDispatcher("welcome.jsp").forward(request, response);
 		}
-
+		//Release Lock for file
+		ReleaseLockRequest releaseLockRequest = new ReleaseLockRequest();
+		releaseLockRequest.setEmail(SecurityFunctions.encrypt("hello@gmail.com", key1));
+		releaseLockRequest.setFilename(SecurityFunctions.encrypt(filename, key1));
+		releaseLockRequest.setToken(token);
+		releaseLockRequest.setUsername(usernameEnc);
+		String lockRequestStr = releaseLockRequest.getJsonString();
+		hf.sendUnLockRequest(lockRequestStr);
+		
 	}
 
 	/**
