@@ -1,5 +1,5 @@
-# JavaFileSystem
-===================
+# Distributed File System
+========================
 
 
 Hey! 
@@ -36,9 +36,9 @@ Configuration & Compilation & Running
 
 
 
-Modules Implimented
+Modules Implemented
 ---------------------
-1) Client
+1) Client Server
 2) Lock Service
 3) Authentication Service
 4) Directory Service
